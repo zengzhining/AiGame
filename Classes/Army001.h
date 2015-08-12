@@ -24,6 +24,7 @@ public:
 
 	void Idle();
 
+	void update(float delta);
 	Node* getBody();
 
 

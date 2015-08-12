@@ -1,4 +1,5 @@
 #include "Hero.h"
+#include "State.h"
 
 
 using namespace spine;
@@ -18,6 +19,9 @@ bool Hero::init(){
 	this->setMix("idle", "walk", 0.2);
 	this->setMix("idle", "attack", 0.2);
 	this->setAllEvent();
+	initData();
+
+	scheduleUpdate();
 
 	return true;
 	
@@ -32,7 +36,7 @@ void Hero::setAllEvent(){
 			_state = HeroState::attack;
 		}
 		if (event->data->intValue == 4) {
-			_state = HeroState::walk;
+			_state = HeroState::jump;
 		}
 	}
 	);
@@ -73,4 +77,97 @@ void Hero::Jump(){
 
 int Hero::getState(){
 	return _state;
+}
+
+void Hero::ChangeState(State* pNewState) {
+	assert(m_currentState && pNewState);
+	//调用现有状态的退出方法
+	m_currentState->Exit(this);
+	//改变状态到新的状态
+	m_currentState = pNewState;
+	//调用新状态的进入方法
+	m_currentState->Enter(this);
+}
+
+void Hero::update(float deltaTime) {
+	SkeletonAnimation::update(deltaTime);
+	if (_time > 0.5)
+	{
+		_time = 0;
+		if (m_currentState) {
+			m_currentState->execute(this);
+			log("hp:%d, money:%d", this->getHp(), this->getMoney());
+		}
+		
+	}
+	_time += deltaTime;
+}
+
+void Hero::minitesHp(int hp) {
+	_Hp -= hp;
+}
+
+void Hero::addHp(int hp) {
+	_Hp += hp;
+}
+
+void Hero::setHp(int hp) {
+	_Hp = hp;
+}
+
+int Hero::getHp(){
+	return _Hp;
+}
+
+bool Hero::initData(){
+	_time = 0;
+	_Hp = 100;
+	_Money = 0;
+	m_currentState = new AttackState();
+	return true;
+}
+
+void Hero::addMoney(int money) {
+	_Money += money;
+}
+void Hero::minitesMoney(int money) {
+	_Money -= money;
+}
+
+int Hero::getMoney(){
+	return _Money;
+}
+
+bool Hero::haveEnoughMoney(){
+	if (this->getMoney() >= 1000)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool Hero::haveNoMoney(){
+	if (this->getMoney() <= 50)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool Hero::isTooTied(){
+	if (this->getHp() <= 20) {
+		return true;
+	}
+	return false;
+}
+
+bool Hero::isNotTired(){
+	if (this->getHp() >= 80)
+	{
+		return true;
+	}
+
+	return false;
 }

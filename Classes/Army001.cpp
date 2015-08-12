@@ -45,3 +45,7 @@ void Army001::Idle(){
 	}
 	
 }
+
+void Army001::update(float delta){
+	log("army update");
+}

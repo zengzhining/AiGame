@@ -7,6 +7,8 @@
 
 using namespace spine;
 
+class State;
+
 
 USING_NS_CC;
 
@@ -23,6 +25,8 @@ public:
 
 	virtual bool init();
 
+	bool initData();
+
 	virtual void setAllEvent();
 
 	//idle
@@ -37,16 +41,49 @@ public:
 	//jump
 	virtual void Jump();
 
+	void minitesHp(int hp);
+
+	void addHp(int hp);
+
+	void setHp(int hp);
+
+	int getHp();
+
+	void update(float deltaTime);
+
 	int getState();
+
+	void ChangeState(State* pNewState);
 
 	Hero() :SkeletonAnimation("skeleton.json", "skeleton.atlas", 0.8){
 
 	}
 
+	State* m_currentState;
 
+	void addMoney(int money);
 
+	void minitesMoney(int money);
+
+	int getMoney();
+
+	//是否有钱
+	bool haveEnoughMoney();
+	//是否没钱
+	bool haveNoMoney();
+
+	//是否太疲劳
+	bool isTooTied();
+	//是否不疲劳
+	bool isNotTired();
 private:
 	int _state;
+
+	float _time;
+
+	int _Hp;
+	int _Money;
+	int _mLocation;
 	
 
 };
